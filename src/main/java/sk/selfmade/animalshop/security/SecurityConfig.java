@@ -53,9 +53,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		http.cors().and().csrf().disable()
 			.exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-			.authorizeRequests().antMatchers("/auth/**").permitAll()
-			.antMatchers("/products").permitAll()
-			.antMatchers("/categories").permitAll()
+			.authorizeRequests().antMatchers("/animalshop/auth/**").permitAll()
+			.antMatchers("/animalshop/products").permitAll()
+			.antMatchers("/animalshop/categories").permitAll()
 			.anyRequest().authenticated();
 
 		http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
