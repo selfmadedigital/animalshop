@@ -31,7 +31,7 @@ import sk.selfmade.animalshop.services.UserDetailsImpl;
 import sk.selfmade.animalshop.utils.JwtUtils;
 
 @RestController
-@RequestMapping("/auth")
+//@RequestMapping("/auth")
 public class AuthController {
 	@Autowired
 	AuthenticationManager authenticationManager;
