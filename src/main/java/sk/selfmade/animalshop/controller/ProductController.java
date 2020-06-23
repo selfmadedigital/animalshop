@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,6 +29,7 @@ public class ProductController {
 	@Autowired
 	ProductRepository productRepository;
 
+	@CrossOrigin(origins = "http://localhost:4200")
 	@GetMapping("/products")
 	public ResponseEntity<List<ProductPreviewResponse>> getAllProducts() {
 		try {
@@ -39,15 +41,17 @@ public class ProductController {
 			}
 
 			products.forEach(product -> {
-			    productListResponse.add(new ProductPreviewResponse(product.getId(), product.getName(), product.getPrice()));
+				productListResponse
+						.add(new ProductPreviewResponse(product.getId(), product.getName(), product.getPrice()));
 			});
 			return new ResponseEntity<>(productListResponse, HttpStatus.OK);
-			
+
 		} catch (Exception e) {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
+	@CrossOrigin(origins = "http://localhost:4200")
 	@GetMapping("/products/{id}")
 	public ResponseEntity<Product> getProductById(@PathVariable("id") UUID id) {
 		try {
@@ -63,6 +67,7 @@ public class ProductController {
 		}
 	}
 
+	@CrossOrigin(origins = "http://localhost:4200")
 	@PostMapping("/products")
 	public ResponseEntity<Product> createProduct(@Validated @RequestBody Product product) {
 		try {
