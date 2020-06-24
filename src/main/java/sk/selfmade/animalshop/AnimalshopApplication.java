@@ -1,5 +1,9 @@
 package sk.selfmade.animalshop;
 
+import java.util.TimeZone;
+
+import javax.annotation.PostConstruct;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
@@ -19,6 +23,9 @@ public class AnimalshopApplication extends SpringBootServletInitializer {
 	public static void main(String[] args) {
 		SpringApplication.run(AnimalshopApplication.class, args);
 	}
-
-
+	
+	@PostConstruct
+    public void init(){
+      TimeZone.setDefault(TimeZone.getTimeZone("Europe/Bratislava"));
+    }
 }
