@@ -13,9 +13,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import sk.selfmade.animalshop.model.Product;
@@ -31,37 +31,31 @@ public class ProductController {
 
 	@CrossOrigin(origins = "http://localhost:4200")
 	@GetMapping("/products")
-	public ResponseEntity<List<ProductPreviewResponse>> getAllProducts() {
+	public ResponseEntity<?> getProducts(@RequestParam(required = false) UUID id) {
 		try {
-			List<Product> products = productRepository.findAll();
-			List<ProductPreviewResponse> productListResponse = new ArrayList<ProductPreviewResponse>();
+			if(null == id) {
+				List<Product> products = productRepository.findAll();
+				List<ProductPreviewResponse> productListResponse = new ArrayList<ProductPreviewResponse>();
+	
+				if (products.isEmpty()) {
+					return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+				}
+	
+				products.forEach(product -> {
+					productListResponse
+							.add(new ProductPreviewResponse(product.getId(), product.getName(), product.getPrice()));
+				});
+				return new ResponseEntity<List<ProductPreviewResponse>>(productListResponse, HttpStatus.OK);
+			}else {
+				Optional<Product> productData = productRepository.findById(id);
 
-			if (products.isEmpty()) {
-				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+				if (productData.isPresent()) {
+					return new ResponseEntity<Product>(productData.get(), HttpStatus.OK);
+				} else {
+					return new ResponseEntity<Product>(HttpStatus.NO_CONTENT);
+				}
 			}
 
-			products.forEach(product -> {
-				productListResponse
-						.add(new ProductPreviewResponse(product.getId(), product.getName(), product.getPrice()));
-			});
-			return new ResponseEntity<>(productListResponse, HttpStatus.OK);
-
-		} catch (Exception e) {
-			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-	}
-
-	@CrossOrigin(origins = "http://localhost:4200")
-	@GetMapping("/products/{id}")
-	public ResponseEntity<Product> getProductById(@PathVariable("id") UUID id) {
-		try {
-			Optional<Product> productData = productRepository.findById(id);
-
-			if (productData.isPresent()) {
-				return new ResponseEntity<>(productData.get(), HttpStatus.OK);
-			} else {
-				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-			}
 		} catch (Exception e) {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}

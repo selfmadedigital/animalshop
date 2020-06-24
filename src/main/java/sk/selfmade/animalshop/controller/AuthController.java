@@ -78,6 +78,9 @@ public class AuthController {
 
 		User user = new User(signUpRequest.getUsername(), signUpRequest.getEmail(),
 				encoder.encode(signUpRequest.getPassword()));
+		
+		
+		
 
 		Set<String> strRoles = signUpRequest.getRoles();
 		Set<Role> roles = new HashSet<>();
@@ -92,6 +95,16 @@ public class AuthController {
 				case "owner":
 					Role modRole = roleRepository.findByName("ROLE_OWNER")
 							.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+
+					Authentication currentAuthentication = SecurityContextHolder.getContext().getAuthentication();
+					UserDetailsImpl currentUserDetails = (UserDetailsImpl) currentAuthentication.getPrincipal();
+					List<String> currentRoles = currentUserDetails.getAuthorities().stream().map(item -> item.getAuthority())
+							.collect(Collectors.toList());
+					
+					if(!currentRoles.contains("ROLE_OWNER")) {
+						throw new RuntimeException("Error: Error: Role 'ROLE_OWNER' need to be authorized by token.");
+					}
+					
 					roles.add(modRole);
 
 					break;

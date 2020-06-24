@@ -3,6 +3,7 @@ package sk.selfmade.animalshop.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -56,8 +57,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			.authorizeRequests()
 			.antMatchers("/signup").permitAll()
 			.antMatchers("/signin").permitAll()
-			.antMatchers("/products").permitAll()
-			.antMatchers("/categories").permitAll()
+			.antMatchers(HttpMethod.POST, "/products").hasRole("OWNER")
+			.antMatchers(HttpMethod.GET, "/products").permitAll()
+			.antMatchers(HttpMethod.POST, "/categories").hasRole("OWNER")
+			.antMatchers(HttpMethod.GET, "/categories").permitAll()
 			.anyRequest().authenticated();
 
 		http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
